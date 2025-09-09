@@ -28,6 +28,7 @@ def fullMathFormatter(mathString):
     mathString = powerExpressionFormat(mathString)
     mathString = multiExpressionsFormat(mathString)
     mathString = additExpressionsFormat(mathString)
+    print(mathString)
     return str(mathString)
 
 def additExpressionsFormat(mathString):
@@ -40,11 +41,10 @@ def additExpressionsFormat(mathString):
 def additEval(mathString):
     mathString = mathString.replace("-", " - ").replace("+", " + ")
     arrayString = mathString.split()
-    print(arrayString)
     if arrayString[0] in "-+":
         out = 0
     else:
-        out = int(arrayString[0])
+        out = float(arrayString[0])
     for index in range(len(arrayString)):
         if arrayString[index] == "-":
             out -= float(arrayString[index + 1])
@@ -55,7 +55,8 @@ def additEval(mathString):
 
 def powerExpressionFormat(mathString):
     if mathString.count("^") != 0:
-        powExpr = re.findall(r'\d+(?:\.\d+)?\^\d+(?:\.\d+)?', mathString)
+        powExpr = re.findall(r'\d+(?:\.\d+)?\^(?:[-])\d+(?:\.\d+)?', mathString)
+        print(powExpr)
         for el in powExpr:
             mathString = mathString.replace(el, str(float(el.split("^")[0])**float(el.split("^")[-1])))
         return mathString
@@ -63,7 +64,7 @@ def powerExpressionFormat(mathString):
 
 def multiExpressionsFormat(mathString):
     if mathString.count("*") != 0 or mathString.count("/") != 0:
-        multiExpr = re.findall(r'\d+(?:\.\d+)?(?:[*/]\d+(?:\.\d+)?)+', mathString)
+        multiExpr = re.findall(r'\d+(?:\.\d+)?(?:[*/-]+\d+(?:\.\d+)?)+', mathString)
         for index in range(len(multiExpr)):
             mathString = mathString.replace(multiExpr[index], multiEval(multiExpr[index]))
     return mathString
@@ -71,10 +72,12 @@ def multiExpressionsFormat(mathString):
 def multiEval(mathString):
     mathString = mathString.replace("/", " / ").replace("*", " * ")
     arrayString = mathString.split()
+    print(arrayString)
     if arrayString[0] not in "/*":
         out = float(arrayString[0])
     else:
         print("Error: Invalid Input")
+        return "0"
     for index in range(len(arrayString)):
         if arrayString[index] == "/":
             if arrayString[index + 1] != "0":
@@ -89,6 +92,9 @@ def multiEval(mathString):
 
 
 def simpleFormatter(mathString):
+    if mathString.count("(") != mathString.count(")"):
+        print("Error: Invalid Input")
+        return "0"
     mathString = mathString.replace(" ", "")
     mathString = mathString.replace("++", "+")
     mathString = mathString.replace("--", "-")
