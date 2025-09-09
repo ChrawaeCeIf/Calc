@@ -3,7 +3,7 @@ import re
 def main():
     flag = True
     while (flag):
-        mathString = input("Print Exit if you want exit from program \nEnter a math expression: ")
+        mathString = input("Enter 'Exit' if you want exit from program \nEnter a math expression: ")
         if mathString == "Exit":
             flag = False
         else:
@@ -32,15 +32,19 @@ def fullMathFormatter(mathString):
 
 def additExpressionsFormat(mathString):
     if mathString.count("-") != 0 or mathString.count("+") != 0:
-        additExpr = re.findall(r'\d+(?:\.\d+)?(?:[+-]\d+(?:\.\d+)?)+', mathString)
+        additExpr = re.findall(r'(?:[-])?\d+(?:\.\d+)?(?:[+-]\d+(?:\.\d+)?)+', mathString)
         for index in range(len(additExpr)):
             mathString = mathString.replace(additExpr[index], additEval(additExpr[index]))
     return mathString
 
 def additEval(mathString):
     mathString = mathString.replace("-", " - ").replace("+", " + ")
-    arrayString = mathString.split(" ")
-    out = float(arrayString[0])
+    arrayString = mathString.split()
+    print(arrayString)
+    if arrayString[0] in "-+":
+        out = 0
+    else:
+        out = int(arrayString[0])
     for index in range(len(arrayString)):
         if arrayString[index] == "-":
             out -= float(arrayString[index + 1])
@@ -51,9 +55,9 @@ def additEval(mathString):
 
 def powerExpressionFormat(mathString):
     if mathString.count("^") != 0:
-        powExpr = re.findall(r'\d+\^\d+', mathString)
+        powExpr = re.findall(r'\d+(?:\.\d+)?\^\d+(?:\.\d+)?', mathString)
         for el in powExpr:
-            mathString = mathString.replace(el, str(int(el.split("^")[0])**int(el.split("^")[-1])))
+            mathString = mathString.replace(el, str(float(el.split("^")[0])**float(el.split("^")[-1])))
         return mathString
     return mathString
 
@@ -66,11 +70,18 @@ def multiExpressionsFormat(mathString):
 
 def multiEval(mathString):
     mathString = mathString.replace("/", " / ").replace("*", " * ")
-    arrayString = mathString.split(" ")
-    out = float(arrayString[0])
+    arrayString = mathString.split()
+    if arrayString[0] not in "/*":
+        out = float(arrayString[0])
+    else:
+        print("Error: Invalid Input")
     for index in range(len(arrayString)):
         if arrayString[index] == "/":
-            out /= float(arrayString[index + 1])
+            if arrayString[index + 1] != "0":
+                out /= float(arrayString[index + 1])
+            else:
+                print("ERROR: Division by zero")
+                return 0
         if arrayString[index] == "*":
             out *= float(arrayString[index + 1])
     return str(float(out))
@@ -85,6 +96,7 @@ def simpleFormatter(mathString):
     mathString = mathString.replace("**", "*")
     mathString = mathString.replace("^^", "^")
     mathString = mathString.replace(")(", ")*(")
+    mathString = mathString.replace("..", ".")
     for el in "0123456789":
         if el + "(" in mathString:
             mathString = mathString.replace(el + "(", el + "*(")
@@ -95,3 +107,4 @@ def simpleFormatter(mathString):
 #print(ParenthesFormatter("40 + (30+20) + (30+23+(30+22))"))
 
 main()
+
