@@ -9,7 +9,7 @@ def main():
         else:
             mathString = simpleFormatter(mathString)
             mathString = "(" + mathString + ")"
-            print(ParenthesFormatter(mathString))
+            print("Solve: " + ParenthesFormatter(mathString))
 
 
 
@@ -28,7 +28,6 @@ def fullMathFormatter(mathString):
     mathString = powerExpressionFormat(mathString)
     mathString = multiExpressionsFormat(mathString)
     mathString = additExpressionsFormat(mathString)
-    print(mathString)
     return str(mathString)
 
 def additExpressionsFormat(mathString):
@@ -55,8 +54,7 @@ def additEval(mathString):
 
 def powerExpressionFormat(mathString):
     if mathString.count("^") != 0:
-        powExpr = re.findall(r'\d+(?:\.\d+)?\^(?:[-])\d+(?:\.\d+)?', mathString)
-        print(powExpr)
+        powExpr = re.findall(r'\d+(?:\.\d+)?\^(?:[-])?\d+(?:\.\d+)?', mathString)
         for el in powExpr:
             mathString = mathString.replace(el, str(float(el.split("^")[0])**float(el.split("^")[-1])))
         return mathString
@@ -72,7 +70,6 @@ def multiExpressionsFormat(mathString):
 def multiEval(mathString):
     mathString = mathString.replace("/", " / ").replace("*", " * ")
     arrayString = mathString.split()
-    print(arrayString)
     if arrayString[0] not in "/*":
         out = float(arrayString[0])
     else:
